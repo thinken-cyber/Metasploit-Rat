@@ -1,0 +1,90 @@
+# Metasploit RAT via EternalBlue & Cloudflare Tunnel
+
+![EternalBlue Exploit](https://img.shields.io/badge/Exploit-EternalBlue%20(MS17--010)-blue)
+![Metasploit Framework](https://img.shields.io/badge/Framework-Metasploit-red)
+![Cloudflare Tunnel](https://img.shields.io/badge/Tunnel-Cloudflare-orange)
+![Scripting Language](https://img.shields.io/badge/Language-Bash%20Script-lightgrey)
+
+This is an advanced, automated project for exploiting the **EternalBlue (MS17-010)** vulnerability on susceptible Windows 7 systems to deploy a Meterpreter-based Remote Access Trojan (RAT). The key feature of this project is its integration with **Cloudflare Tunnel**, enabling the payload to establish a reverse connection to the attacker's machine from anywhere on the internet, bypassing NAT and firewall restrictions without requiring port forwarding.
+
+**DISCLAIMER:** This tool is intended for educational purposes and authorized security research in controlled environments only. Unauthorized use of this tool to attack systems without explicit permission is illegal. The author is not responsible for any misuse or damage caused by this program.
+
+---
+
+## Key Features
+
+- **Full Automation:** A single command launches the entire attack chain.
+- **NAT/Firewall Traversal:** Utilizes Cloudflare Tunnel for reverse connections, eliminating the need for router port forwarding.
+- **Stealthy Communication:** Leverages a `reverse_httpss` payload to encrypt traffic, making it appear as legitimate, secure web traffic.
+- **Active Exploitation:** Focuses on actively exploiting the EternalBlue vulnerability to deliver the payload, requiring no user interaction on the target machine.
+- **Automatic Cleanup:** The script automatically terminates background processes (like the tunnel) upon completion.
+
+---
+
+## Requirements
+
+1.  **Attacker Machine:** Kali Linux or another Linux distribution with Metasploit Framework installed.
+2.  **Cloudflare Account:** A free Cloudflare account is sufficient.
+3.  **Domain Name:** A domain added to your Cloudflare account with its nameservers correctly pointed to Cloudflare.
+4.  **`cloudflared`:** The Cloudflare Tunnel client installed on the attacker's machine.
+
+---
+
+## Setup and Configuration
+
+### Step 1: Cloudflare Configuration (One-Time Setup)
+
+1.  **Create a Tunnel:**
+    - Log in to your **Cloudflare Zero Trust Dashboard**.
+    - Navigate to `Networks` -> `Tunnels`.
+    - Click `+ Create a tunnel` and choose `Cloudflared` as the connector type.
+    - Name your tunnel (e.g., `my-web-server`).
+    - After creation, Cloudflare will provide a **TOKEN string**. **Copy and save this token securely.**
+
+2.  **Configure a Public Hostname:**
+    - Within the newly created tunnel, go to the `Public Hostnames` tab.
+    - Click `+ Add a public hostname` and configure it as follows:
+        - **Subdomain:** `listener` (or any name you prefer)
+        - **Domain:** Your domain name (e.g., `thinkencyber.io.vn`)
+        - **Service Type:** `HTTPS`
+        - **URL:** `http://localhost:8080` (This is the internal port Metasploit will listen on)
+    - Click **Save hostname**.
+
+### Step 2: Script Configuration on Kali Linux
+
+1.  **Clone the Repository:**
+    ```bash
+    git clone https://github.com/thinken-cyber/Metasploit-Rat.git
+    cd Metasploit-Rat
+    ```
+
+2.  **Create and Edit the Automation Script:**
+    - Create a new file: `touch run_eternalblue_cloudflare.sh`
+    - Make it executable: `chmod +x run_eternalblue_cloudflare.sh`
+    - Open `run_eternalblue_cloudflare.sh` with a text editor (e.g., `nano`).
+    - Paste the content of the automation script provided [here](<link-to-your-script-or-provide-it-below>).
+    - Find the line `TUNNEL_TOKEN="PASTE_YOUR_TUNNEL_TOKEN_HERE"` and **replace the placeholder with the token** you saved from Step 1.
+    - You can also customize other variables like `TUNNEL_NAME`, `LISTENER_HOST`, and `INTERNAL_MSF_PORT` if you changed them during the Cloudflare setup.
+
+---
+
+## Usage
+
+Once the setup is complete, launching an attack is incredibly simple.
+
+1.  Open a terminal and navigate to the project directory.
+2.  Execute the script with the following syntax:
+    ```bash
+    ./run_eternalblue_cloudflare.sh <TARGET_IP_ADDRESS>
+    ```
+    **Example:**
+    ```bash
+    ./run_eternalblue_cloudflare.sh 192.168.1.100
+    ```
+
+3.  The script will automatically handle the following tasks:
+    - Starts the Cloudflare Tunnel in the background.
+    - Creates a Metasploit resource file with all necessary configurations.
+    - Launches `msfconsole` and automatically runs the exploit.
+
+4.  Sit back, watch the process, and wait for a Meterpreter session to open. When you are finished and type `exit` in `msfconsole`, the script will automatically shut down the tunnel for a clean exit.
