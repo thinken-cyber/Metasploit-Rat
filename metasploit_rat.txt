@@ -1,0 +1,9 @@
+Tên lỗ hổng: CVE-2017-0144 – EternalBlue
+
+Loại lỗi: Heap-based Buffer Overflow
+
+Nằm trong file: srv.sys – driver xử lý SMB trong Windows.
+
+Hàm bị lỗi: SrvOs2FeaToNt() – xử lý danh sách File Extended Attributes (FEA).
+
+Nguyên nhân lỗi: Không kiểm tra đúng kích thước ghi → tràn số nguyên (integer overflow) → dẫn đến ghi tràn bộ nhớ heap.
